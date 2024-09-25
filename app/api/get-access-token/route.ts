@@ -1,9 +1,9 @@
-const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
-
 export async function POST() {
+  const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
+  
   try {
     if (!HEYGEN_API_KEY) {
-      throw new Error("API key is missing from .env");
+      throw new Error("API key is missing from environment variables");
     }
 
     const res = await fetch(
@@ -15,7 +15,12 @@ export async function POST() {
         },
       },
     );
+
     const data = await res.json();
+
+    if (!data.data || !data.data.token) {
+      throw new Error(`Invalid response from API: ${JSON.stringify(data)}`);
+    }
 
     return new Response(data.data.token, {
       status: 200,
@@ -28,3 +33,4 @@ export async function POST() {
     });
   }
 }
+
